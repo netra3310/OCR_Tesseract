@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<div class="select_path">
+  <!-- <input id="image_path" type="file" webkitdirectory directory multiple> -->
+  <input id="image_file" type="file">
+</div>
+<div class="image_file_list"></div>
+<div class="data_image"></div>
+<div class="data_table" id="data_table">
+  <button type="button" id="save_data">Save</button>
+</div>
+
+
+
+<!-- <input type="file" id="select" accept="image/png, image/gif, image/webp, image/jpeg"> -->
+<!-- <input type="file" id="folder-input" webkitdirectory multiple> -->
+<!-- <button type="button" id="recognize">recognize</button> -->
+
+<!-- (B) LOAD TESSERACT -->
+<!-- https://cdnjs.com/libraries/tesseract.js -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.0.6/tesseract.min.js"></script> -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.2/tesseract.min.js"></script>
+<script src="./main.js"></script>
+<!-- (C) INIT -->
+<script>
+// window.addEventListener("load", async () => {
+//   // (C1) GET HTML FILE SELECTOR
+//   const hSel = document.getElementById("select");
+
+//   const recogButton = document.getElementById("recognize");
+
+//   // (C2) CREATE ENGLISH WORKER
+//   const worker = await Tesseract.createWorker('jpn');
+//   // await worker.loadLanguage("jpn");
+//   // await worker.initialize("jpn");
+//   //await worker.SetRectangle(int left, int top, int width, int height);
+//   //await worker.SetRectangle(0, 0, 150, 100);
+ 
+
+//   // (C3) ON FILE SELECT
+//   // hSel.onchange = async () => {
+//   //   // (C3-1) IMAGE TO TEXT
+//   //   const res = await worker.recognize(hSel.files[0],{
+//   //     rectangle: { top: document.getElementById("top").value, left: document.getElementById("left").value, width: document.getElementById("width").value, height: document.getElementById("height").value },
+//   //   });
+
+//   //   console.log(res.data.text);
+
+//   //   // (C3-2) UPLOAD TO SERVER
+//   //   // let data = new FormData();
+//   //   // data.append("text", res.data.text);
+//   //   // fetch("save.php", { method:"post", body:data })
+//   //   // .then(res => res.text())
+//   //   // .then(txt => console.log(txt))
+//   //   // .catch(err => console.error(err));
+//   // };
+
+
+//   recogButton.onclick = async () => {
+//     // (C3-1) IMAGE TO TEXT
+//     const res = await worker.recognize(hSel.files[0],{
+//       rectangle: { top: document.getElementById("top").value, left: document.getElementById("left").value, width: document.getElementById("width").value, height: document.getElementById("height").value },
+//     });
+
+//     console.log(res.data.text);
+
+//     // (C3-2) UPLOAD TO SERVER
+//     // let data = new FormData();
+//     // data.append("text", res.data.text);
+//     // fetch("save.php", { method:"post", body:data })
+//     // .then(res => res.text())
+//     // .then(txt => console.log(txt))
+//     // .catch(err => console.error(err));
+//   };
+
+
+//   const folderInput = document.getElementById('folder-input');
+
+//   folderInput.addEventListener('change', () => {
+//     const fileNames = [];
+
+//     for (const file of folderInput.files) {
+//       fileNames.push(file.name);
+//     }
+
+//     console.log('File names:', fileNames);
+//   });
+// });
+</script>
