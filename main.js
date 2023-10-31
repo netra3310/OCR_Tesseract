@@ -21,9 +21,9 @@ const tableRows = [
 ];
 
 const x1 = 780;
-const w1 = 85;
+const w1 = 70;
 const x2 = 880;
-const w2 = 520;
+const w2 = 500;
 
 const tableAreas = [
 	[302, 128], // y, h
@@ -38,46 +38,146 @@ const tableAreas = [
 ];
 
 const buildTableData = (tableValues) => {
-	
-	const tableDataEle = document.getElementById("data_table");
-
-	let insertHtml = '';
 	for (var i = 0; i < tableRows.length; i ++) {
 		for (var j = 0; j < tableRows[i].length; j ++) {
-			var eleString = tableRows[i][j] + ": "
-			 + '<input type="text" name="' + 'i' + '-' + 'j-1' + '" value="' + (tableValues[tableRows[i][j]] !== undefined ? tableValues[tableRows[i][j]][0] : '') + '">'
-			 + '<input type="text" name="' + 'i' + '-' + 'j-2' + '" value="' + (tableValues[tableRows[i][j]] !== undefined ? tableValues[tableRows[i][j]][1] : '') + '">';
-			var divEle = '<div class="item">' + eleString + '</div>';
-			insertHtml += divEle;
+			const markEle = document.getElementById("mark-" + tableRows[i][j]);
+			if (markEle)
+				markEle.value = tableValues[tableRows[i][j]][0];
+			const sizeEle = document.getElementById("size-" + tableRows[i][j]);
+			if (sizeEle)
+				sizeEle.value = tableValues[tableRows[i][j]][1];
 		}
 	}
+	
+	// const tableDataEle = document.getElementById("data_table");
 
-	tableDataEle.insertAdjacentHTML('afterbegin', insertHtml);
+	// let insertHtml = '';
+	// for (var i = 0; i < tableRows.length; i ++) {
+	// 	for (var j = 0; j < tableRows[i].length; j ++) {
+	// 		var eleString = tableRows[i][j] + ": "
+	// 		 + '<input type="text" name="' + 'i' + '-' + 'j-1' + '" value="' + (tableValues[tableRows[i][j]] !== undefined ? tableValues[tableRows[i][j]][0] : '') + '">'
+	// 		 + '<input type="text" name="' + 'i' + '-' + 'j-2' + '" value="' + (tableValues[tableRows[i][j]] !== undefined ? tableValues[tableRows[i][j]][1] : '') + '">';
+	// 		var divEle = '<div class="item">' + eleString + '</div>';
+	// 		insertHtml += divEle;
+	// 	}
+	// }
+
+	// tableDataEle.insertAdjacentHTML('afterbegin', insertHtml);
+}
+
+const buildFileList = (files) => {
+	const fileSelectboxEle = document.getElementById("current-file");
+	fileSelectboxEle.id = "current-file";
+
+	for (var i = 0; i < files.length; i++) {
+		const fileSelectOptionEle = document.createElement("option");
+		fileSelectOptionEle.name = files[i].name;
+		fileSelectOptionEle.text = files[i].name;
+		fileSelectOptionEle.value = files[i].name.replace('.', '_');
+		fileSelectOptionEle.classList.add("filename");
+		fileSelectboxEle.add(fileSelectOptionEle);
+	}
 }
 
 window.addEventListener("load", async () => {
-	const worker = await Tesseract.createWorker('jpn');
+	const worker = await Tesseract.createWorker('jpn+eng', {
+		language_model_ngram_on: '0',
+		segsearch_max_char_wh_ratio: 2,
+		language_model_ngram_space_delimited_language: 1,
+		language_model_ngram_scale_factor: 0.03,
+		language_model_use_sigmoidal_certainty: 1,
+		language_model_ngram_nonmatch_score: -40,
+		classify_integer_matcher_multiplier: 10,
+		assume_fixed_pitch_char_segment: 0,
+		chop_enable: 0,
+		allow_blob_division: 0,
+	});
+	await worker.setParameters({
+		tessedit_pageseg_mode: '6',
+	});
 
 	const imageFileEle = document.getElementById("image_file");
 	let tableValues = {};
 	imageFileEle.onchange = async () => {
+		// buildFileList(imageFileEle.files);
+		// const fileSelectboxEle = document.getElementById("current-file");
+		// if (fileSelectboxEle) {
+		// 	fileSelectboxEle.onchange = (e) => {
+		// 		const filename = e.target.value;
+		// 		console.log(filename);
+		// 	}
+		// }
+
+		// var value = await worker.recognize(imageFileEle.files[0], {
+		// 	rectangle: {
+		// 		top: 302,
+		// 		left: 780,
+		// 		width: 85,
+		// 		height: 32
+		// 	}
+		// });
+
+		const testValue = await worker.recognize(imageFileEle.files[0], {
+			rectangle: {
+				top: 522,
+				left: 895,
+				width: 366,
+				height: 56
+			}
+		});
+		console.log(testValue);
+
+
+		const checkDateValue = await worker.recognize(imageFileEle.files[0], {
+			rectangle: {
+				top: 135,
+				left: 573,
+				width: 295,
+				height: 52
+			}
+		});
+
+		const checkDateEle = document.getElementById("check-date");
+		checkDateEle.value = checkDateValue.data.text;
+		
 		for (var i = 0; i < tableRows.length; i ++) {
 			for (var j = 0; j < tableRows[i].length; j ++) {
-				var height = tableAreas[i][1] / tableRows[i].length;
-				var area1 = [x1, tableAreas[i][0] + height * j, w1, height];
-				var area2 = [x2, tableAreas[i][0] + height * j, w2, height];
+				var height = (tableAreas[i][1] - 16) / tableRows[i].length;
+				var area1 = [x1 + 10, tableAreas[i][0] + 8 + height * j, w1, height];
+				var area2 = [x2 + 10, tableAreas[i][0] + 8 + height * j, w2, height];
 				console.log(tableRows[i][j]);
 				console.log(area1);
 				console.log(area2);
 				var value1 = await worker.recognize(imageFileEle.files[0],{
-					rectangle: { top: area1[0], left: area1[1], width: area1[2], height: area1[3] },
+					rectangle: { left: area1[0], top: area1[1], width: area1[2], height: area1[3] },
+					// language_model_ngram_on: 0,
+					// segsearch_max_char_wh_ratio: 2,
+					// language_model_ngram_space_delimited_language: 1,
+					// language_model_ngram_scale_factor: 0.03,
+					// language_model_use_sigmoidal_certainty: 1,
+					// language_model_ngram_nonmatch_score: -40,
+					// classify_integer_matcher_multiplier: 10,
+					// assume_fixed_pitch_char_segment: 0,
+					// chop_enable: 1,
+					// allow_blob_division: 0,
+					pageseg_devanagari_split_strategy: 1
 				});
 				var value2 = await worker.recognize(imageFileEle.files[0],{
-					rectangle: { top: area2[0], left: area2[1], width: area2[2], height: area2[3] },
+					rectangle: { left: area2[0], top: area2[1], width: area2[2], height: area2[3] },
+					// language_model_ngram_on: 0,
+					// segsearch_max_char_wh_ratio: 2,
+					// language_model_ngram_space_delimited_language: 1,
+					// language_model_ngram_scale_factor: 0.03,
+					// language_model_use_sigmoidal_certainty: 1,
+					// language_model_ngram_nonmatch_score: -40,
+					// classify_integer_matcher_multiplier: 10,
+					// assume_fixed_pitch_char_segment: 0,
+					// chop_enable: 1,
+					// allow_blob_division: 0,
 				});
 				tableValues[tableRows[i][j]] = [value1.data.text, value2.data.text];
 			}
 		}
 		buildTableData(tableValues);
-	}
+	};	
 });

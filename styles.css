@@ -1,0 +1,86 @@
+h2.title {
+    text-align: center;
+}
+
+.company-title {
+    position: absolute;
+    top: 0px;
+}
+
+.page-pattern-1 {
+    position: relative;
+}
+
+.header {
+    display: flex;
+}
+
+.patient-info {
+    padding: 10px;
+    padding-right: 30px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.check-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.patient-info-detail {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+table.table-check-result {
+    line-height: 24px;
+    border-collapse: collapse;
+}
+
+th {
+    border: 1px black solid;
+}
+
+th.th-type {
+    width: 50px;
+}
+
+th.th-codeno {
+    width: 150px;
+    text-align: left;
+}
+
+th.th-description {
+    width: 200px;
+    text-align: left;
+}
+
+th.th-mark {
+    width: 50px;
+}
+
+th.th-size {
+    width: 300px;
+}
+
+td {
+    vertical-align: top;
+    border: 1px black solid;
+    padding: 3px;
+}
+
+input.mark {
+    width: 85%;
+}
+
+td.size {
+    padding: 3px 20px;
+}
+
+input.size {
+    width: 100%;
+}

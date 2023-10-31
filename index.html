@@ -1,13 +1,337 @@
 <!DOCTYPE html>
-<div class="select_path">
-  <!-- <input id="image_path" type="file" webkitdirectory directory multiple> -->
-  <input id="image_file" type="file">
-</div>
-<div class="image_file_list"></div>
-<div class="data_image"></div>
-<div class="data_table" id="data_table">
-  <button type="button" id="save_data">Save</button>
-</div>
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="select_path">
+    <!-- <input id="image_path" type="file" webkitdirectory directory multiple> -->
+    <input id="image_file" type="file" multiple>
+  </div>
+  <!-- <div class="image_file_list" id="image_file_list">
+    Current File:
+    <select class="select-file" id="current-file"></select>
+  </div> -->
+  <div class="data_image"></div>
+  <!-- <div class="data_table" id="data_table">
+    <button type="button" id="save_data">Save</button>
+  </div> -->
+  <div class="page-pattern-1">
+    <h2 class="title">Title</h2>
+    <div class="company-title">my company:</div>
+    <div class="header">
+      <div class="patient-info">
+        <div class="check-info">
+          <div class="check-no">
+            checkNo: 
+          </div>
+          <div class="check-date">
+            checkDate:
+            <input class="check-date" id="check-date">
+          </div>
+        </div>
+        <div class="patient-info-detail">
+          <div class="patient-name">
+            name   Name
+          </div>
+          <div class="patient-age">
+            age   33
+          </div>
+        </div>
+      </div>
+      <div class="mark-list">
+        <div class="mark-list-item">
+          A : ordinary
+        </div>
+        <div class="mark-list-item">
+          B : a little ordinary
+        </div>
+        <div class="mark-list-item">
+          C : check again later  C1: check again 2-3 months later
+        </div>
+        <div class="mark-list-item">
+          D : check again now  D1: check seriously
+        </div>
+      </div>
+      <div class="no">
+        No. 6998
+      </div>
+    </div>
+    <table class="table-check-result">
+      <tr>
+        <th class="th-type"></th>
+        <th class="th-codeno">Code No</th>
+        <th class="th-description">Description</th>
+        <th class="th-mark">Mark</th>
+        <th class="th-size">Size Detail</th>
+      </tr>
+      <tr>
+        <td class="type">1</td>
+        <td class="code-no">
+          <div>T003</div>
+          <div>T001</div>
+          <div>T009</div>
+          <div></div>
+        </td>
+        <td class="description">
+          <div>des1</div>
+          <div>des2</div>
+          <div>des3</div>
+          <div>other</div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-t003"/>
+          <input class="mark" id="mark-t001"/>
+          <input class="mark" id="mark-t009"/>
+          <input class="mark" id="mark-t999"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-t003"/>
+          <input class="size" id="size-t001"/>
+          <input class="size" id="size-t009"/>
+          <input class="size" id="size-t999"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">2</td>
+        <td class="code-no">
+          <div>K001/K002/K003</div>
+          <div>K004</div>
+          <div>K010</div>
+          <div>K012</div>
+          <div>K006</div>
+          <div></div>
+        </td>
+        <td class="description">
+          <div>des1</div>
+          <div>des2</div>
+          <div>des3</div>
+          <div>des4</div>
+          <div>des5</div>
+          <div>other</div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-k001"/>
+          <input class="mark" id="mark-k004"/>
+          <input class="mark" id="mark-k010"/>
+          <input class="mark" id="mark-k012"/>
+          <input class="mark" id="mark-k006"/>
+          <input class="mark" id="mark-k999"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-k001"/>
+          <input class="size" id="size-k004"/>
+          <input class="size" id="size-k010"/>
+          <input class="size" id="size-k012"/>
+          <input class="size" id="size-k006"/>
+          <input class="size" id="size-k999"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">3</td>
+        <td class="code-no">
+          <div>S001</div>
+          <div>S009</div>
+          <div>S003</div>
+          <div></div>
+        </td>
+        <td class="description">
+          <div>des1</div>
+          <div>des2</div>
+          <div>des3</div>
+          <div>other</div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-s001"/>
+          <input class="mark" id="mark-s009"/>
+          <input class="mark" id="mark-s003"/>
+          <input class="mark" id="mark-s999"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-s001"/>
+          <input class="size" id="size-s009"/>
+          <input class="size" id="size-s003"/>
+          <input class="size" id="size-s999"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">4</td>
+        <td class="code-no">
+          <div>H009/H010/H011</div>
+          <div>H007</div>
+          <div></div>
+        </td>
+        <td class="description">
+          <div>des1</div>
+          <div>des2</div>
+          <div>other</div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-h009"/>
+          <input class="mark" id="mark-h007"/>
+          <input class="mark" id="mark-h999"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-h009"/>
+          <input class="size" id="size-h007"/>
+          <input class="size" id="size-h999"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">5</td>
+        <td class="code-no">
+          <div>J007/J008/J009</div>
+          <div>J001/J002/J003</div>
+          <div>J027/J028/J029</div>
+          <div>J017/J018</div>
+          <div></div>
+        </td>
+        <td class="description">
+          <div>des1</div>
+          <div>des2</div>
+          <div>des3</div>
+          <div>des4</div>
+          <div>other</div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-j007"/>
+          <input class="mark" id="mark-j001"/>
+          <input class="mark" id="mark-j027"/>
+          <input class="mark" id="mark-j017"/>
+          <input class="mark" id="mark-j999"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-j007"/>
+          <input class="size" id="size-j001"/>
+          <input class="size" id="size-j027"/>
+          <input class="size" id="size-j017"/>
+          <input class="size" id="size-j999"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">6</td>
+        <td class="code-no">
+          <div></div>
+        </td>
+        <td class="description">
+          <div></div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-zz1"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-zz1"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">7</td>
+        <td class="code-no">
+          <div>B003</div>
+          <div>B001</div>
+          <div></div>
+        </td>
+        <td class="description">
+          <div>des1</div>
+          <div>des2</div>
+          <div>other</div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-boo3"/>
+          <input class="mark" id="mark-boo1"/>
+          <input class="mark" id="mark-b999"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-b003"/>
+          <input class="size" id="size-b001"/>
+          <input class="size" id="size-b999"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">7</td>
+        <td class="code-no">
+          <div>Z002</div>
+          <div></div>
+        </td>
+        <td class="description">
+          <div>des1</div>
+          <div>other</div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-z002"/>
+          <input class="mark" id="mark-z999"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-z002"/>
+          <input class="size" id="size-z999"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">8</td>
+        <td class="code-no">
+          <div>Q005</div>
+          <div>Q004</div>
+          <div>Q003</div>
+          <div></div>
+        </td>
+        <td class="description">
+          <div>des1</div>
+          <div>des2</div>
+          <div>des3</div>
+          <div>other</div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-q005"/>
+          <input class="mark" id="mark-q004"/>
+          <input class="mark" id="mark-q003"/>
+          <input class="mark" id="mark-q999"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-q005"/>
+          <input class="size" id="size-q004"/>
+          <input class="size" id="size-q003"/>
+          <input class="size" id="size-q999"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">9</td>
+        <td class="code-no">
+          <div>R009-r/R010/R011</div>
+          <div>R015/R016/R017</div>
+          <div></div>
+        </td>
+        <td class="description">
+          <div>des1</div>
+          <div>des2</div>
+          <div>other</div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-r009"/>
+          <input class="mark" id="mark-r015"/>
+          <input class="mark" id="mark-r999"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-r009"/>
+          <input class="size" id="size-r015"/>
+          <input class="size" id="size-r999"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="type">10</td>
+        <td class="code-no">
+          <div></div>
+        </td>
+        <td class="description">
+          <div></div>
+        </td>
+        <td class="mark">
+          <input class="mark" id="mark-zzz"/>
+        </td>
+        <td class="size">
+          <input class="size" id="size-zzz"/>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
 
 
 
