@@ -24,6 +24,17 @@ h2.title {
     justify-content: space-between;
 }
 
+.patient-info-name {
+    width: 150px;
+    margin-left: 20px;
+}
+
+.patient-info-age {
+    width: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .check-info {
     display: flex;
     justify-content: space-between;

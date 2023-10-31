@@ -29,13 +29,25 @@ const tableAreas = [
 	[302, 128], // y, h
 	[430, 190],
 	[628, 128],
-	[760, 96],
+	[756, 96],
 	[860, 156],
 	[1086, 94],
 	[1182, 64],
 	[1250, 128],
 	[1380, 96],
 ];
+
+// const tableAreas = [
+// 	[302, 120], // y, h
+// 	[429, 188],
+// 	[627, 127],
+// 	[760, 89],
+// 	[858, 154],
+// 	[1087, 88],
+// 	[1180, 62],
+// 	[1249, 122],
+// 	[1378, 106],
+// ];
 
 const buildTableData = (tableValues) => {
 	for (var i = 0; i < tableRows.length; i ++) {
@@ -117,15 +129,15 @@ window.addEventListener("load", async () => {
 		// 	}
 		// });
 
-		const testValue = await worker.recognize(imageFileEle.files[0], {
-			rectangle: {
-				top: 522,
-				left: 895,
-				width: 366,
-				height: 56
-			}
-		});
-		console.log(testValue);
+		// const testValue = await worker.recognize(imageFileEle.files[0], {
+		// 	rectangle: {
+		// 		top: 522,
+		// 		left: 895,
+		// 		width: 366,
+		// 		height: 56
+		// 	}
+		// });
+		// console.log(testValue);
 
 
 		const checkDateValue = await worker.recognize(imageFileEle.files[0], {
@@ -136,15 +148,36 @@ window.addEventListener("load", async () => {
 				height: 52
 			}
 		});
-
 		const checkDateEle = document.getElementById("check-date");
 		checkDateEle.value = checkDateValue.data.text;
+
+		const nameValue = await worker.recognize(imageFileEle.files[0], {
+			rectangle: {
+				top: 225,
+				left: 260,
+				width: 215,
+				height: 42
+			}
+		});
+		const nameEle = document.getElementById("patient-info-name");
+		nameEle.value = nameValue.data.text;
+
+		const ageValue = await worker.recognize(imageFileEle.files[0], {
+			rectangle: {
+				top: 223,
+				left: 664,
+				width: 96,
+				height: 40
+			}
+		});
+		const ageEle = document.getElementById("patient-info-age");
+		ageEle.value = ageValue.data.text;
 		
 		for (var i = 0; i < tableRows.length; i ++) {
 			for (var j = 0; j < tableRows[i].length; j ++) {
-				var height = (tableAreas[i][1] - 16) / tableRows[i].length;
-				var area1 = [x1 + 10, tableAreas[i][0] + 8 + height * j, w1, height];
-				var area2 = [x2 + 10, tableAreas[i][0] + 8 + height * j, w2, height];
+				var height = (tableAreas[i][1]) / tableRows[i].length;
+				var area1 = [x1 + 10, tableAreas[i][0] + height * j, w1, height];
+				var area2 = [x2 + 10, tableAreas[i][0] + height * j, w2, height];
 				console.log(tableRows[i][j]);
 				console.log(area1);
 				console.log(area2);

@@ -16,40 +16,42 @@
     <button type="button" id="save_data">Save</button>
   </div> -->
   <div class="page-pattern-1">
-    <h2 class="title">Title</h2>
-    <div class="company-title">my company:</div>
+    <h2 class="title">腹部超音波検査 受診票</h2>
     <div class="header">
       <div class="patient-info">
         <div class="check-info">
           <div class="check-no">
-            checkNo: 
+            受診 N0. 
           </div>
           <div class="check-date">
-            checkDate:
+            受診日
             <input class="check-date" id="check-date">
           </div>
         </div>
         <div class="patient-info-detail">
           <div class="patient-name">
-            name   Name
+            氏名
+            <input class="patient-info-name" id="patient-info-name" />
           </div>
           <div class="patient-age">
-            age   33
+            様
+            <input class="patient-info-age" id="patient-info-age" />
+            歳
           </div>
         </div>
       </div>
       <div class="mark-list">
         <div class="mark-list-item">
-          A : ordinary
+          A: 正常範囲
         </div>
         <div class="mark-list-item">
-          B : a little ordinary
+          B: 僅かに所見あるも現在健康者扱い
         </div>
         <div class="mark-list-item">
-          C : check again later  C1: check again 2-3 months later
+          C: 要経過観察 C1:念のため 2〜3 力月後再検
         </div>
         <div class="mark-list-item">
-          D : check again now  D1: check seriously
+          D: 要再検又は要精査 D1:至急要精査
         </div>
       </div>
       <div class="no">
@@ -59,13 +61,13 @@
     <table class="table-check-result">
       <tr>
         <th class="th-type"></th>
-        <th class="th-codeno">Code No</th>
-        <th class="th-description">Description</th>
-        <th class="th-mark">Mark</th>
-        <th class="th-size">Size Detail</th>
+        <th class="th-codeno">コード No.</th>
+        <th class="th-description">所見に○印</th>
+        <th class="th-mark">判定</th>
+        <th class="th-size">サイズ及び個数</th>
       </tr>
       <tr>
-        <td class="type">1</td>
+        <td class="type">胆</td>
         <td class="code-no">
           <div>T003</div>
           <div>T001</div>
@@ -73,10 +75,10 @@
           <div></div>
         </td>
         <td class="description">
-          <div>des1</div>
-          <div>des2</div>
-          <div>des3</div>
-          <div>other</div>
+          <div>胆のう結石</div>
+          <div>胆のうポリープ</div>
+          <div>胆のう病変</div>
+          <div>その他</div>
         </td>
         <td class="mark">
           <input class="mark" id="mark-t003"/>
@@ -92,7 +94,7 @@
         </td>
       </tr>
       <tr>
-        <td class="type">2</td>
+        <td class="type">肝</td>
         <td class="code-no">
           <div>K001/K002/K003</div>
           <div>K004</div>
@@ -102,12 +104,12 @@
           <div></div>
         </td>
         <td class="description">
-          <div>des1</div>
-          <div>des2</div>
-          <div>des3</div>
-          <div>des4</div>
-          <div>des5</div>
-          <div>other</div>
+          <div>軽・中・高序脂肪肝</div>
+          <div>肝のう胞</div>
+          <div>肝内石灰化</div>
+          <div>肝内血管腫</div>
+          <div>肝内病変</div>
+          <div>その他</div>
         </td>
         <td class="mark">
           <input class="mark" id="mark-k001"/>
@@ -127,7 +129,7 @@
         </td>
       </tr>
       <tr>
-        <td class="type">3</td>
+        <td class="type">膵</td>
         <td class="code-no">
           <div>S001</div>
           <div>S009</div>
@@ -135,10 +137,10 @@
           <div></div>
         </td>
         <td class="description">
-          <div>des1</div>
-          <div>des2</div>
-          <div>des3</div>
-          <div>other</div>
+          <div>膵のう胞</div>
+          <div>膵管拡張</div>
+          <div>膵病変</div>
+          <div>その他</div>
         </td>
         <td class="mark">
           <input class="mark" id="mark-s001"/>
@@ -154,16 +156,16 @@
         </td>
       </tr>
       <tr>
-        <td class="type">4</td>
+        <td class="type">脾</td>
         <td class="code-no">
           <div>H009/H010/H011</div>
           <div>H007</div>
           <div></div>
         </td>
         <td class="description">
-          <div>des1</div>
-          <div>des2</div>
-          <div>other</div>
+          <div>軽・中・高度脾腫</div>
+          <div>脾のう胞</div>
+          <div>その他</div>
         </td>
         <td class="mark">
           <input class="mark" id="mark-h009"/>
@@ -177,7 +179,7 @@
         </td>
       </tr>
       <tr>
-        <td class="type">5</td>
+        <td class="type">腎</td>
         <td class="code-no">
           <div>J007/J008/J009</div>
           <div>J001/J002/J003</div>
@@ -186,11 +188,11 @@
           <div></div>
         </td>
         <td class="description">
-          <div>des1</div>
-          <div>des2</div>
-          <div>des3</div>
-          <div>des4</div>
-          <div>other</div>
+          <div>両・右・左腎結石</div>
+          <div>両・右・左腎のう胞</div>
+          <div>両・右・左腎孟尿管拡張</div>
+          <div>右・左腎病変</div>
+          <div>その他</div>
         </td>
         <td class="mark">
           <input class="mark" id="mark-j007"/>
@@ -208,7 +210,7 @@
         </td>
       </tr>
       <tr>
-        <td class="type">6</td>
+        <td class="type">腹部大動脈</td>
         <td class="code-no">
           <div></div>
         </td>
@@ -223,16 +225,16 @@
         </td>
       </tr>
       <tr>
-        <td class="type">7</td>
+        <td class="type">膀</td>
         <td class="code-no">
           <div>B003</div>
           <div>B001</div>
           <div></div>
         </td>
         <td class="description">
-          <div>des1</div>
-          <div>des2</div>
-          <div>other</div>
+          <div>膀胱結石</div>
+          <div>膀胱病変</div>
+          <div>その他</div>
         </td>
         <td class="mark">
           <input class="mark" id="mark-boo3"/>
@@ -246,14 +248,14 @@
         </td>
       </tr>
       <tr>
-        <td class="type">7</td>
+        <td class="type">前</td>
         <td class="code-no">
           <div>Z002</div>
           <div></div>
         </td>
         <td class="description">
-          <div>des1</div>
-          <div>other</div>
+          <div>前立腺肥大</div>
+          <div>その他</div>
         </td>
         <td class="mark">
           <input class="mark" id="mark-z002"/>
@@ -265,7 +267,7 @@
         </td>
       </tr>
       <tr>
-        <td class="type">8</td>
+        <td class="type">子宮</td>
         <td class="code-no">
           <div>Q005</div>
           <div>Q004</div>
@@ -273,10 +275,10 @@
           <div></div>
         </td>
         <td class="description">
-          <div>des1</div>
-          <div>des2</div>
-          <div>des3</div>
-          <div>other</div>
+          <div>子宮筋腫</div>
+          <div>子宮のう胞</div>
+          <div>子宮病変</div>
+          <div>その他</div>
         </td>
         <td class="mark">
           <input class="mark" id="mark-q005"/>
@@ -292,16 +294,16 @@
         </td>
       </tr>
       <tr>
-        <td class="type">9</td>
+        <td class="type">卵巣</td>
         <td class="code-no">
           <div>R009-r/R010/R011</div>
           <div>R015/R016/R017</div>
           <div></div>
         </td>
         <td class="description">
-          <div>des1</div>
-          <div>des2</div>
-          <div>other</div>
+          <div>両・右・左卵植のう腫</div>
+          <div>両・右・左卵巣病変</div>
+          <div>その他</div>
         </td>
         <td class="mark">
           <input class="mark" id="mark-r009"/>
@@ -315,7 +317,7 @@
         </td>
       </tr>
       <tr>
-        <td class="type">10</td>
+        <td class="type">その他</td>
         <td class="code-no">
           <div></div>
         </td>
