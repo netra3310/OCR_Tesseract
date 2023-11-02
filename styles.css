@@ -2,9 +2,8 @@ h2.title {
     text-align: center;
 }
 
-.company-title {
-    position: absolute;
-    top: 0px;
+#save-data {
+    margin-top: 20px;
 }
 
 .page-pattern-1 {

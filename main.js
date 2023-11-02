@@ -91,22 +91,24 @@ const buildFileList = (files) => {
 	}
 }
 
+var csvString = '';
+
 window.addEventListener("load", async () => {
 	const worker = await Tesseract.createWorker('jpn+eng', {
-		language_model_ngram_on: '0',
-		segsearch_max_char_wh_ratio: 2,
-		language_model_ngram_space_delimited_language: 1,
-		language_model_ngram_scale_factor: 0.03,
-		language_model_use_sigmoidal_certainty: 1,
-		language_model_ngram_nonmatch_score: -40,
-		classify_integer_matcher_multiplier: 10,
-		assume_fixed_pitch_char_segment: 0,
-		chop_enable: 0,
-		allow_blob_division: 0,
+		// language_model_ngram_on: '0',
+		// segsearch_max_char_wh_ratio: '2',
+		// language_model_ngram_space_delimited_language: '1',
+		// language_model_ngram_scale_factor: '0.03',
+		// language_model_use_sigmoidal_certainty: '1',
+		// language_model_ngram_nonmatch_score: '-40',
+		// classify_integer_matcher_multiplier: '10',
+		// assume_fixed_pitch_char_segment: '0',
+		// chop_enable: '1',
+		// allow_blob_division: '0',
 	});
-	await worker.setParameters({
-		tessedit_pageseg_mode: '6',
-	});
+	// await worker.setParameters({
+	// 	tessedit_pageseg_mode: '6',
+	// });
 
 	const imageFileEle = document.getElementById("image_file");
 	let tableValues = {};
@@ -120,15 +122,6 @@ window.addEventListener("load", async () => {
 		// 	}
 		// }
 
-		// var value = await worker.recognize(imageFileEle.files[0], {
-		// 	rectangle: {
-		// 		top: 302,
-		// 		left: 780,
-		// 		width: 85,
-		// 		height: 32
-		// 	}
-		// });
-
 		// const testValue = await worker.recognize(imageFileEle.files[0], {
 		// 	rectangle: {
 		// 		top: 522,
@@ -138,7 +131,6 @@ window.addEventListener("load", async () => {
 		// 	}
 		// });
 		// console.log(testValue);
-
 
 		const checkDateValue = await worker.recognize(imageFileEle.files[0], {
 			rectangle: {
@@ -183,34 +175,23 @@ window.addEventListener("load", async () => {
 				console.log(area2);
 				var value1 = await worker.recognize(imageFileEle.files[0],{
 					rectangle: { left: area1[0], top: area1[1], width: area1[2], height: area1[3] },
-					// language_model_ngram_on: 0,
-					// segsearch_max_char_wh_ratio: 2,
-					// language_model_ngram_space_delimited_language: 1,
-					// language_model_ngram_scale_factor: 0.03,
-					// language_model_use_sigmoidal_certainty: 1,
-					// language_model_ngram_nonmatch_score: -40,
-					// classify_integer_matcher_multiplier: 10,
-					// assume_fixed_pitch_char_segment: 0,
-					// chop_enable: 1,
-					// allow_blob_division: 0,
-					pageseg_devanagari_split_strategy: 1
 				});
 				var value2 = await worker.recognize(imageFileEle.files[0],{
 					rectangle: { left: area2[0], top: area2[1], width: area2[2], height: area2[3] },
-					// language_model_ngram_on: 0,
-					// segsearch_max_char_wh_ratio: 2,
-					// language_model_ngram_space_delimited_language: 1,
-					// language_model_ngram_scale_factor: 0.03,
-					// language_model_use_sigmoidal_certainty: 1,
-					// language_model_ngram_nonmatch_score: -40,
-					// classify_integer_matcher_multiplier: 10,
-					// assume_fixed_pitch_char_segment: 0,
-					// chop_enable: 1,
-					// allow_blob_division: 0,
 				});
 				tableValues[tableRows[i][j]] = [value1.data.text, value2.data.text];
 			}
 		}
 		buildTableData(tableValues);
-	};	
+	};
+
+	const saveButton = document.getElementById("save-data");
+	saveButton.onclick = () => {
+		let data = new FormData();
+    data.append("text", csvString);
+    fetch("http://localhost:8001/save.php", { method:"post", mode: "no-cors", body:data })
+    .then(res => res.text())
+    .then(txt => console.log(txt))
+    .catch(err => console.error(err));
+	}
 });
