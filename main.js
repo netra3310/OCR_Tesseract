@@ -1,13 +1,3 @@
-const getAreas = (left, top, width, height, rows) => {
-	const subheight = height / rows;
-	let params = [];
-	for (i = 0; i < rows; i ++) {
-		params.push([left, top + subheight * i, width, subheight]);
-	}
-
-	return params;
-};
-
 const tableRows = [
 	["t003", "t001", "t009", "t999"],
 	["k001", "k004", "k010", "k012", "k006", "k999"],
@@ -49,19 +39,6 @@ const tableAreas = [
 // 	[1378, 106],
 // ];
 
-const buildTableData = (tableValues) => {
-	for (var i = 0; i < tableRows.length; i ++) {
-		for (var j = 0; j < tableRows[i].length; j ++) {
-			const markEle = document.getElementById("mark-" + tableRows[i][j]);
-			if (markEle)
-				markEle.value = tableValues[tableRows[i][j]][0];
-			const sizeEle = document.getElementById("size-" + tableRows[i][j]);
-			if (sizeEle)
-				sizeEle.value = tableValues[tableRows[i][j]][1];
-		}
-	}
-}
-
 const buildFileList = (files) => {
 	const fileSelectboxEle = document.getElementById("current-file");
 	fileSelectboxEle.id = "current-file";
@@ -76,7 +53,37 @@ const buildFileList = (files) => {
 	}
 }
 
-const processImage = (imagePath) => {
+const displayExtractedText = (index, subIndex, type, text) => {
+	if (type === 0) {
+		const markEle = document.getElementById("mark-" + tableRows[index][subIndex]);
+		if (markEle)
+			markEle.value = text;
+	} else if (type === 1) {
+		const sizeEle = document.getElementById("size-" + tableRows[index][subIndex]);
+		if (sizeEle)
+			sizeEle.value = text;
+	}
+}
+
+const buildTableData = (tableValues) => {
+	for (var i = 0; i < tableRows.length; i ++) {
+		for (var j = 0; j < tableRows[i].length; j ++) {
+			const markEle = document.getElementById("mark-" + tableRows[i][j]);
+			if (markEle)
+				markEle.value = tableValues[tableRows[i][j]][0];
+			const sizeEle = document.getElementById("size-" + tableRows[i][j]);
+			if (sizeEle)
+				sizeEle.value = tableValues[tableRows[i][j]][1];
+		}
+	}
+}
+
+const getArea = (left, top, width, height, rows, index) => {
+	const subheight = height / rows;
+	return [left, top + subheight * index, width, subheight];
+};
+
+const processImage = (area, imagePath) => {
 	const image = new Image();
 	image.src = imagePath;
 
@@ -88,10 +95,10 @@ const processImage = (imagePath) => {
 		canvas.height = image.height;
 
 		ctx.drawImage(image, 0, 0);
-		const x = 894; // X-coordinate of the top-left corner of the crop area
-		const y = 521; // Y-coordinate of the top-left corner of the crop area
-		const width = 363; // Width of the crop area
-		const height = 54; // Height of the crop area
+		const x = area[0]; // X-coordinate of the top-left corner of the crop area
+		const y = area[1]; // Y-coordinate of the top-left corner of the crop area
+		const width = area[2]; // Width of the crop area
+		const height = area[3]; // Height of the crop area
 
 		const croppedCanvas = document.createElement('canvas');
 		const croppedCtx = croppedCanvas.getContext('2d');
@@ -101,7 +108,8 @@ const processImage = (imagePath) => {
 
 		croppedCtx.drawImage(canvas, x, y, width, height, 0, 0, width, height);
 
-		croppedCanvas.toBlob(function(blob) {
+		croppedCanvas.toBlob((blob) => {
+
 			// Use the appropriate method to initiate the download based on the browser
 			if (window.navigator.msSaveBlob) {
 				// For Internet Explorer
@@ -118,74 +126,106 @@ const processImage = (imagePath) => {
 	};
 }
 
+const getTextUsingApi = async (file) => {
+	const url = 'https://pen-to-print-handwriting-ocr.p.rapidapi.com/recognize/';
+	const data = new FormData();
+	data.append('srcImg', file);
+	data.append('Session', 'string');
+
+	const options = {
+		method: 'POST',
+		headers: {
+			'X-RapidAPI-Key': '3e659fe86fmsh4824cc492a5a969p140c45jsnc2e6abfeb8a6',
+			'X-RapidAPI-Host': 'pen-to-print-handwriting-ocr.p.rapidapi.com'
+		},
+		body: data
+	};
+
+	try {
+		const response = await fetch(url, options);
+		const result = await response.text();
+		console.log(result);
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+const extractTextFromImg = async (tesseractWorker, targetArea, file) => {
+	const area = {
+		left: targetArea[0],
+		top: targetArea[1],
+		width: targetArea[2],
+		height: targetArea[3]
+	};
+
+	const tesseractResut = await tesseractWorker.recognize(file, 
+		{
+			rectangle: area
+		}
+	);
+	const tesseractText = tesseractResut.data.text?.replace("\n", "").replace(" ", "");
+
+	if (tesseractText !== undefined && tesseractText !== "") {
+
+	}
+
+	// crop image
+	const imagePath = URL.createObjectURL(file);
+	const image = new Image();
+	image.src = imagePath;
+
+	image.onload = () => {
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+
+		canvas.width = image.width;
+		canvas.height = image.height;
+
+		ctx.drawImage(image, 0, 0);
+		const { left, top, width, height} = area;
+
+		const croppedCanvas = document.createElement('canvas');
+		const croppedCtx = croppedCanvas.getContext('2d');
+
+		croppedCanvas.width = width;
+		croppedCanvas.height = height;
+
+		croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+
+		croppedCanvas.toBlob(async (blob) => {
+			const croppedImageFile = new File([blob], "test", { type: blob.type });
+			await getTextUsingApi(croppedImageFile);
+		}, 'image/png');
+	};
+}
+
 window.addEventListener("load", async () => {
 	const worker = await Tesseract.createWorker('eng', 1,
-	{
-		// langPath: './trained_data_best',
-		corePath: './node_modules/tesseract.js-core',
-		workerPath: "./node_modules/tesseract.js/dist/worker.min.js",
-		// gzip: 0,
-		// logger: function(m){console.log(m);}
-	}
+		{
+			corePath: './node_modules/tesseract.js-core',
+			workerPath: "./node_modules/tesseract.js/dist/worker.min.js",
+		}
 	);
 
-	
-	// const worker = await Tesseract.createWorker('jpn+eng', {
-	// 	tessedit_ocr_engine_mode: '2',
-	// 	// language_model_ngram_on: '0',
-	// 	// segsearch_max_char_wh_ratio: '2',
-	// 	// language_model_ngram_space_delimited_language: '1',
-	// 	// language_model_ngram_scale_factor: '0.03',
-	// 	// language_model_use_sigmoidal_certainty: '1',
-	// 	// language_model_ngram_nonmatch_score: '-40',
-	// 	// classify_integer_matcher_multiplier: '10',
-	// 	// assume_fixed_pitch_char_segment: '0',
-	// 	// chop_enable: '1',
-	// 	// allow_blob_division: '0',
-	// });
-	// await worker.setParameters({
-		
-	// });
-
 	const imageFileEle = document.getElementById("image_file");
-	let tableValues = {};
 	imageFileEle.onchange = async () => {
-		// buildFileList(imageFileEle.files);
-		// const fileSelectboxEle = document.getElementById("current-file");
-		// if (fileSelectboxEle) {
-		// 	fileSelectboxEle.onchange = (e) => {
-		// 		const filename = e.target.value;
-		// 		console.log(filename);
-		// 	}
-		// }
+		const seletedImagePath = URL.createObjectURL(imageFileEle.files[0]);
+		// // preview selected image
+		// const previewImage = document.getElementById('previewImage');
+		// previewImage.src = seletedImagePath;
 
-		const imagePath = URL.createObjectURL(imageFileEle.files[0]);
-		console.log(imagePath);
+		// await extractTextFromImage(imageFileEle.files[0]);
 
-		const previewImage = document.getElementById('previewImage');
-		previewImage.src = imagePath;
+		
 
-		processImage(imagePath);
 
-		const testValue = await worker.recognize(imageFileEle.files[0], 
-			// {
-			// rectangle: {
-			// 	// top: 522,
-			// 	// left: 895,
-			// 	// width: 366,
-			// 	// height: 56
-			// 	top: 521,
-			// 	left: 894,
-			// 	width: 363,
-			// 	height: 54
-			// },
-			// tessedit_pageseg_mode: '6',
-			// tessedit_zero_rejection: '0',
-			// tessedit_ocr_engine_mode: '3',
-			// }
-		);
-		console.log(testValue.data.text);
-		console.log(testValue);
+		// const testValue = await worker.recognize(imageFileEle.files[0]);
+		// console.log("**********Tesseract***********");
+		// console.log(testValue.data.text);
+		// console.log(testValue);
+
+
+		await extractTextFromImg(worker, [573, 135, 295, 52], imageFileEle.files[0]);
 
 		// const checkDateValue = await worker.recognize(imageFileEle.files[0], {
 		// 	rectangle: {
@@ -195,6 +235,10 @@ window.addEventListener("load", async () => {
 		// 		height: 52
 		// 	}
 		// });
+		// var tesseractResut = checkDateValue.data.text.replace("\n", "");
+		// if (tesseractResut !== "") {
+
+		// }
 		// const checkDateEle = document.getElementById("check-date");
 		// checkDateEle.value = checkDateValue.data.text;
 
