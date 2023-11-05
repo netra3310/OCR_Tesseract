@@ -1,2 +1,4 @@
 /*.csv
 /test_image.jpg
+/node_modules
+/trained_data_best

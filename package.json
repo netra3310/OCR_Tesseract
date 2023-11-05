@@ -1,0 +1,15 @@
+{
+  "name": "01_src",
+  "version": "1.0.0",
+  "description": "Tesseract OCR project to recognize text from various image templates",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tesseract.js": "^5.0.3"
+  }
+}

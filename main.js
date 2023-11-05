@@ -60,21 +60,6 @@ const buildTableData = (tableValues) => {
 				sizeEle.value = tableValues[tableRows[i][j]][1];
 		}
 	}
-	
-	// const tableDataEle = document.getElementById("data_table");
-
-	// let insertHtml = '';
-	// for (var i = 0; i < tableRows.length; i ++) {
-	// 	for (var j = 0; j < tableRows[i].length; j ++) {
-	// 		var eleString = tableRows[i][j] + ": "
-	// 		 + '<input type="text" name="' + 'i' + '-' + 'j-1' + '" value="' + (tableValues[tableRows[i][j]] !== undefined ? tableValues[tableRows[i][j]][0] : '') + '">'
-	// 		 + '<input type="text" name="' + 'i' + '-' + 'j-2' + '" value="' + (tableValues[tableRows[i][j]] !== undefined ? tableValues[tableRows[i][j]][1] : '') + '">';
-	// 		var divEle = '<div class="item">' + eleString + '</div>';
-	// 		insertHtml += divEle;
-	// 	}
-	// }
-
-	// tableDataEle.insertAdjacentHTML('afterbegin', insertHtml);
 }
 
 const buildFileList = (files) => {
@@ -91,23 +76,33 @@ const buildFileList = (files) => {
 	}
 }
 
-var csvString = '';
-
 window.addEventListener("load", async () => {
-	const worker = await Tesseract.createWorker('jpn+eng', {
-		// language_model_ngram_on: '0',
-		// segsearch_max_char_wh_ratio: '2',
-		// language_model_ngram_space_delimited_language: '1',
-		// language_model_ngram_scale_factor: '0.03',
-		// language_model_use_sigmoidal_certainty: '1',
-		// language_model_ngram_nonmatch_score: '-40',
-		// classify_integer_matcher_multiplier: '10',
-		// assume_fixed_pitch_char_segment: '0',
-		// chop_enable: '1',
-		// allow_blob_division: '0',
-	});
+	const worker = await Tesseract.createWorker('eng', 1,
+	{
+		// langPath: './trained_data_best',
+		corePath: './node_modules/tesseract.js-core',
+		workerPath: "./node_modules/tesseract.js/dist/worker.min.js",
+		// gzip: 0,
+		// logger: function(m){console.log(m);}
+	}
+	);
+
+	
+	// const worker = await Tesseract.createWorker('jpn+eng', {
+	// 	tessedit_ocr_engine_mode: '2',
+	// 	// language_model_ngram_on: '0',
+	// 	// segsearch_max_char_wh_ratio: '2',
+	// 	// language_model_ngram_space_delimited_language: '1',
+	// 	// language_model_ngram_scale_factor: '0.03',
+	// 	// language_model_use_sigmoidal_certainty: '1',
+	// 	// language_model_ngram_nonmatch_score: '-40',
+	// 	// classify_integer_matcher_multiplier: '10',
+	// 	// assume_fixed_pitch_char_segment: '0',
+	// 	// chop_enable: '1',
+	// 	// allow_blob_division: '0',
+	// });
 	// await worker.setParameters({
-	// 	tessedit_pageseg_mode: '6',
+		
 	// });
 
 	const imageFileEle = document.getElementById("image_file");
@@ -122,76 +117,89 @@ window.addEventListener("load", async () => {
 		// 	}
 		// }
 
-		// const testValue = await worker.recognize(imageFileEle.files[0], {
+		// const imagePath = URL.createObjectURL(file);
+		// console.log(imagePath);
+
+		const testValue = await worker.recognize(imageFileEle.files[0], 
+			// {
+			// rectangle: {
+			// 	// top: 522,
+			// 	// left: 895,
+			// 	// width: 366,
+			// 	// height: 56
+			// 	top: 521,
+			// 	left: 894,
+			// 	width: 363,
+			// 	height: 54
+			// },
+			// tessedit_pageseg_mode: '6',
+			// tessedit_zero_rejection: '0',
+			// tessedit_ocr_engine_mode: '3',
+			// }
+		);
+		console.log(testValue.data.text);
+		console.log(testValue);
+
+		// const checkDateValue = await worker.recognize(imageFileEle.files[0], {
 		// 	rectangle: {
-		// 		top: 522,
-		// 		left: 895,
-		// 		width: 366,
-		// 		height: 56
+		// 		top: 135,
+		// 		left: 573,
+		// 		width: 295,
+		// 		height: 52
 		// 	}
 		// });
-		// console.log(testValue);
+		// const checkDateEle = document.getElementById("check-date");
+		// checkDateEle.value = checkDateValue.data.text;
 
-		const checkDateValue = await worker.recognize(imageFileEle.files[0], {
-			rectangle: {
-				top: 135,
-				left: 573,
-				width: 295,
-				height: 52
-			}
-		});
-		const checkDateEle = document.getElementById("check-date");
-		checkDateEle.value = checkDateValue.data.text;
+		// const nameValue = await worker.recognize(imageFileEle.files[0], {
+		// 	rectangle: {
+		// 		top: 225,
+		// 		left: 260,
+		// 		width: 215,
+		// 		height: 42
+		// 	}
+		// });
+		// const nameEle = document.getElementById("patient-info-name");
+		// nameEle.value = nameValue.data.text;
 
-		const nameValue = await worker.recognize(imageFileEle.files[0], {
-			rectangle: {
-				top: 225,
-				left: 260,
-				width: 215,
-				height: 42
-			}
-		});
-		const nameEle = document.getElementById("patient-info-name");
-		nameEle.value = nameValue.data.text;
-
-		const ageValue = await worker.recognize(imageFileEle.files[0], {
-			rectangle: {
-				top: 223,
-				left: 664,
-				width: 96,
-				height: 40
-			}
-		});
-		const ageEle = document.getElementById("patient-info-age");
-		ageEle.value = ageValue.data.text;
+		// const ageValue = await worker.recognize(imageFileEle.files[0], {
+		// 	rectangle: {
+		// 		top: 223,
+		// 		left: 664,
+		// 		width: 96,
+		// 		height: 40
+		// 	}
+		// });
+		// const ageEle = document.getElementById("patient-info-age");
+		// ageEle.value = ageValue.data.text;
 		
-		for (var i = 0; i < tableRows.length; i ++) {
-			for (var j = 0; j < tableRows[i].length; j ++) {
-				var height = (tableAreas[i][1]) / tableRows[i].length;
-				var area1 = [x1 + 10, tableAreas[i][0] + height * j, w1, height];
-				var area2 = [x2 + 10, tableAreas[i][0] + height * j, w2, height];
-				console.log(tableRows[i][j]);
-				console.log(area1);
-				console.log(area2);
-				var value1 = await worker.recognize(imageFileEle.files[0],{
-					rectangle: { left: area1[0], top: area1[1], width: area1[2], height: area1[3] },
-				});
-				var value2 = await worker.recognize(imageFileEle.files[0],{
-					rectangle: { left: area2[0], top: area2[1], width: area2[2], height: area2[3] },
-				});
-				tableValues[tableRows[i][j]] = [value1.data.text, value2.data.text];
-			}
-		}
-		buildTableData(tableValues);
+		// for (var i = 0; i < tableRows.length; i ++) {
+		// 	for (var j = 0; j < tableRows[i].length; j ++) {
+		// 		var height = (tableAreas[i][1]) / tableRows[i].length;
+		// 		var area1 = [x1 + 10, tableAreas[i][0] + height * j, w1, height];
+		// 		var area2 = [x2 + 10, tableAreas[i][0] + height * j, w2, height];
+		// 		console.log(tableRows[i][j]);
+		// 		console.log(area1);
+		// 		console.log(area2);
+		// 		var value1 = await worker.recognize(imageFileEle.files[0],{
+		// 			rectangle: { left: area1[0], top: area1[1], width: area1[2], height: area1[3] },
+		// 		});
+		// 		var value2 = await worker.recognize(imageFileEle.files[0],{
+		// 			rectangle: { left: area2[0], top: area2[1], width: area2[2], height: area2[3] },
+		// 		});
+		// 		tableValues[tableRows[i][j]] = [value1.data.text, value2.data.text];
+		// 	}
+		// }
+		// buildTableData(tableValues);
 	};
 
 	const saveButton = document.getElementById("save-data");
 	saveButton.onclick = () => {
 		let data = new FormData();
-    data.append("text", csvString);
-    fetch("http://localhost:8001/save.php", { method:"post", mode: "no-cors", body:data })
-    .then(res => res.text())
-    .then(txt => console.log(txt))
-    .catch(err => console.error(err));
+		data.append("text", "hello, this, is, test, string");
+		fetch("http://localhost:8001/save.php", { method:"post", mode: "no-cors", body:data })
+		.then(res => res.text())
+		.then(txt => console.log(txt))
+		.catch(err => console.error(err));
 	}
 });
