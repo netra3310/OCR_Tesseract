@@ -88,11 +88,10 @@ const processImage = (imagePath) => {
 		canvas.height = image.height;
 
 		ctx.drawImage(image, 0, 0);
-
-		const x = 100; // X-coordinate of the top-left corner of the crop area
-		const y = 100; // Y-coordinate of the top-left corner of the crop area
-		const width = 200; // Width of the crop area
-		const height = 200; // Height of the crop area
+		const x = 894; // X-coordinate of the top-left corner of the crop area
+		const y = 521; // Y-coordinate of the top-left corner of the crop area
+		const width = 363; // Width of the crop area
+		const height = 54; // Height of the crop area
 
 		const croppedCanvas = document.createElement('canvas');
 		const croppedCtx = croppedCanvas.getContext('2d');
