@@ -76,6 +76,49 @@ const buildFileList = (files) => {
 	}
 }
 
+const processImage = (imagePath) => {
+	const image = new Image();
+	image.src = imagePath;
+
+	image.onload = function() {
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+
+		canvas.width = image.width;
+		canvas.height = image.height;
+
+		ctx.drawImage(image, 0, 0);
+
+		const x = 100; // X-coordinate of the top-left corner of the crop area
+		const y = 100; // Y-coordinate of the top-left corner of the crop area
+		const width = 200; // Width of the crop area
+		const height = 200; // Height of the crop area
+
+		const croppedCanvas = document.createElement('canvas');
+		const croppedCtx = croppedCanvas.getContext('2d');
+
+		croppedCanvas.width = width;
+		croppedCanvas.height = height;
+
+		croppedCtx.drawImage(canvas, x, y, width, height, 0, 0, width, height);
+
+		croppedCanvas.toBlob(function(blob) {
+			// Use the appropriate method to initiate the download based on the browser
+			if (window.navigator.msSaveBlob) {
+				// For Internet Explorer
+				window.navigator.msSaveBlob(blob, 'cropped-image.png');
+			} else {
+				// For other browsers
+				const url = URL.createObjectURL(blob);
+				const link = document.getElementById('hiddenLink');
+				link.href = url;
+				link.download = 'cropped-image.png';
+				link.click();
+			}
+		}, 'image/png');
+	};
+}
+
 window.addEventListener("load", async () => {
 	const worker = await Tesseract.createWorker('eng', 1,
 	{
@@ -117,8 +160,13 @@ window.addEventListener("load", async () => {
 		// 	}
 		// }
 
-		// const imagePath = URL.createObjectURL(file);
-		// console.log(imagePath);
+		const imagePath = URL.createObjectURL(imageFileEle.files[0]);
+		console.log(imagePath);
+
+		const previewImage = document.getElementById('previewImage');
+		previewImage.src = imagePath;
+
+		processImage(imagePath);
 
 		const testValue = await worker.recognize(imageFileEle.files[0], 
 			// {
