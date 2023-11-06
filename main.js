@@ -15,29 +15,29 @@ const w1 = 70;
 const x2 = 880;
 const w2 = 500;
 
-const tableAreas = [
-	[302, 128], // y, h
-	[430, 190],
-	[628, 128],
-	[756, 96],
-	[860, 156],
-	[1086, 94],
-	[1182, 64],
-	[1250, 128],
-	[1380, 96],
-];
-
 // const tableAreas = [
-// 	[302, 120], // y, h
-// 	[429, 188],
-// 	[627, 127],
-// 	[760, 89],
-// 	[858, 154],
-// 	[1087, 88],
-// 	[1180, 62],
-// 	[1249, 122],
-// 	[1378, 106],
+// 	[302, 128], // y, h
+// 	[430, 190],
+// 	[628, 128],
+// 	[756, 96],
+// 	[860, 156],
+// 	[1086, 94],
+// 	[1182, 64],
+// 	[1250, 128],
+// 	[1380, 96],
 // ];
+
+const tableAreas = [
+	[302, 120], // y, h
+	[429, 188],
+	[627, 127],
+	[760, 89],
+	[858, 154],
+	[1087, 88],
+	[1180, 62],
+	[1249, 122],
+	[1378, 106],
+];
 
 const buildFileList = (files) => {
 	const fileSelectboxEle = document.getElementById("current-file");
@@ -126,7 +126,7 @@ const processImage = (area, imagePath) => {
 	};
 }
 
-const getTextUsingApi = async (file) => {
+const getTextUsingApi = async (file, result) => {
 	const url = 'https://pen-to-print-handwriting-ocr.p.rapidapi.com/recognize/';
 	const data = new FormData();
 	data.append('srcImg', file);
@@ -135,7 +135,7 @@ const getTextUsingApi = async (file) => {
 	const options = {
 		method: 'POST',
 		headers: {
-			'X-RapidAPI-Key': '3e659fe86fmsh4824cc492a5a969p140c45jsnc2e6abfeb8a6',
+			'X-RapidAPI-Key': '16521b9d28msh594999a7536c54fp15bd79jsn8d968e2c557f',
 			'X-RapidAPI-Host': 'pen-to-print-handwriting-ocr.p.rapidapi.com'
 		},
 		body: data
@@ -144,9 +144,9 @@ const getTextUsingApi = async (file) => {
 	try {
 		const response = await fetch(url, options);
 		const result = await response.text();
-		console.log(result);
+		return result;
 	} catch (error) {
-		console.error(error);
+		return error;		
 	}
 }
 
@@ -164,9 +164,10 @@ const extractTextFromImg = async (tesseractWorker, targetArea, file) => {
 		}
 	);
 	const tesseractText = tesseractResut.data.text?.replace("\n", "").replace(" ", "");
-
-	if (tesseractText !== undefined && tesseractText !== "") {
-
+	console.log("tesseractText === ", tesseractText);
+	if (tesseractText === undefined || tesseractText === "") {
+		console.log("blank area");
+		return false;
 	}
 
 	// crop image
@@ -174,33 +175,40 @@ const extractTextFromImg = async (tesseractWorker, targetArea, file) => {
 	const image = new Image();
 	image.src = imagePath;
 
-	image.onload = () => {
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
+	return new Promise((resolve, reject) => {
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
 
-		canvas.width = image.width;
-		canvas.height = image.height;
+      canvas.width = image.width;
+      canvas.height = image.height;
 
-		ctx.drawImage(image, 0, 0);
-		const { left, top, width, height} = area;
+      ctx.drawImage(image, 0, 0);
+      const { left, top, width, height} = area;
 
-		const croppedCanvas = document.createElement('canvas');
-		const croppedCtx = croppedCanvas.getContext('2d');
+      const croppedCanvas = document.createElement('canvas');
+      const croppedCtx = croppedCanvas.getContext('2d');
 
-		croppedCanvas.width = width;
-		croppedCanvas.height = height;
+      croppedCanvas.width = width;
+      croppedCanvas.height = height;
 
-		croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+      croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
 
-		croppedCanvas.toBlob(async (blob) => {
-			const croppedImageFile = new File([blob], "test", { type: blob.type });
-			await getTextUsingApi(croppedImageFile);
-		}, 'image/png');
-	};
+      croppedCanvas.toBlob(async (blob) => {
+        const croppedImageFile = new File([blob], "test", { type: blob.type });
+				const result = await getTextUsingApi(croppedImageFile);
+        resolve(result);
+      }, 'image/png');
+    };
+
+    image.onerror = (error) => {
+      reject(error);
+    };
+  });
 }
 
 window.addEventListener("load", async () => {
-	const worker = await Tesseract.createWorker('eng', 1,
+	const worker = await Tesseract.createWorker('eng+jpn', 1,
 		{
 			corePath: './node_modules/tesseract.js-core',
 			workerPath: "./node_modules/tesseract.js/dist/worker.min.js",
@@ -210,77 +218,70 @@ window.addEventListener("load", async () => {
 	const imageFileEle = document.getElementById("image_file");
 	imageFileEle.onchange = async () => {
 		const seletedImagePath = URL.createObjectURL(imageFileEle.files[0]);
+
 		// // preview selected image
 		// const previewImage = document.getElementById('previewImage');
 		// previewImage.src = seletedImagePath;
 
-		// await extractTextFromImage(imageFileEle.files[0]);
+		let result = null;
+		result = await extractTextFromImg(worker, [573, 135, 295, 52], imageFileEle.files[0]);
+		const checkDateEle = document.getElementById("check-date");
+		const resultObj = JSON.parse(result);
+		checkDateEle.value = resultObj.value;
 
+		const nameValue = await worker.recognize(imageFileEle.files[0], {
+			rectangle: {
+				top: 225,
+				left: 260,
+				width: 215,
+				height: 42
+			}
+		});
+		const nameEle = document.getElementById("patient-info-name");
+		nameEle.value = nameValue.data.text;
+
+		const ageValue = await worker.recognize(imageFileEle.files[0], {
+			rectangle: {
+				top: 223,
+				left: 664,
+				width: 96,
+				height: 40
+			}
+		});
+		const ageEle = document.getElementById("patient-info-age");
+		ageEle.value = ageValue.data.text;
 		
+		for (var i = 0; i < tableRows.length; i ++) {
+			for (var j = 0; j < tableRows[i].length; j ++) {
+				var height = (tableAreas[i][1]) / tableRows[i].length;
+				var area1 = [x1 + 10, tableAreas[i][0] + height * j, w1, height];
+				var area2 = [x2 + 10, tableAreas[i][0] + height * j, w2, height];
 
+				console.log(tableRows[i][j]);
+				console.log(area1);
+				console.log(area2);
 
-		// const testValue = await worker.recognize(imageFileEle.files[0]);
-		// console.log("**********Tesseract***********");
-		// console.log(testValue.data.text);
-		// console.log(testValue);
+				var result1 = await extractTextFromImg(worker, area1, imageFileEle.files[0]);
+				if (result1) {
+					var resultObj1 = JSON.parse(result1);
+					displayExtractedText(i, j, 0, resultObj1?.value); // mark
+				}
 
+				var result2 = await extractTextFromImg(worker, area2, imageFileEle.files[0]);
+				if (result2) {
+					var resultObj2 = JSON.parse(result2);
+					displayExtractedText(i, j, 1, resultObj2?.value); // size
+				}
 
-		await extractTextFromImg(worker, [573, 135, 295, 52], imageFileEle.files[0]);
-
-		// const checkDateValue = await worker.recognize(imageFileEle.files[0], {
-		// 	rectangle: {
-		// 		top: 135,
-		// 		left: 573,
-		// 		width: 295,
-		// 		height: 52
-		// 	}
-		// });
-		// var tesseractResut = checkDateValue.data.text.replace("\n", "");
-		// if (tesseractResut !== "") {
-
-		// }
-		// const checkDateEle = document.getElementById("check-date");
-		// checkDateEle.value = checkDateValue.data.text;
-
-		// const nameValue = await worker.recognize(imageFileEle.files[0], {
-		// 	rectangle: {
-		// 		top: 225,
-		// 		left: 260,
-		// 		width: 215,
-		// 		height: 42
-		// 	}
-		// });
-		// const nameEle = document.getElementById("patient-info-name");
-		// nameEle.value = nameValue.data.text;
-
-		// const ageValue = await worker.recognize(imageFileEle.files[0], {
-		// 	rectangle: {
-		// 		top: 223,
-		// 		left: 664,
-		// 		width: 96,
-		// 		height: 40
-		// 	}
-		// });
-		// const ageEle = document.getElementById("patient-info-age");
-		// ageEle.value = ageValue.data.text;
-		
-		// for (var i = 0; i < tableRows.length; i ++) {
-		// 	for (var j = 0; j < tableRows[i].length; j ++) {
-		// 		var height = (tableAreas[i][1]) / tableRows[i].length;
-		// 		var area1 = [x1 + 10, tableAreas[i][0] + height * j, w1, height];
-		// 		var area2 = [x2 + 10, tableAreas[i][0] + height * j, w2, height];
-		// 		console.log(tableRows[i][j]);
-		// 		console.log(area1);
-		// 		console.log(area2);
-		// 		var value1 = await worker.recognize(imageFileEle.files[0],{
-		// 			rectangle: { left: area1[0], top: area1[1], width: area1[2], height: area1[3] },
-		// 		});
-		// 		var value2 = await worker.recognize(imageFileEle.files[0],{
-		// 			rectangle: { left: area2[0], top: area2[1], width: area2[2], height: area2[3] },
-		// 		});
-		// 		tableValues[tableRows[i][j]] = [value1.data.text, value2.data.text];
-		// 	}
-		// }
+				// var value1 = await worker.recognize(imageFileEle.files[0],{
+				// 	rectangle: { left: area1[0], top: area1[1], width: area1[2], height: area1[3] },
+				// });
+				// var value2 = await worker.recognize(imageFileEle.files[0],{
+				// 	rectangle: { left: area2[0], top: area2[1], width: area2[2], height: area2[3] },
+				// });
+				// tableValues[tableRows[i][j]] = [value1.data.text, value2.data.text];
+			}
+		}
 		// buildTableData(tableValues);
 	};
 
